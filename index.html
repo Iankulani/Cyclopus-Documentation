@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyclopus Docs 🐙</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --orange: #FF7A1A;
+    --orange-deep: #E85D04;
+    --orange-light: #FFB868;
+    --cream: #FFF6E9;
+    --cream-2: #FFEAD1;
+    --teal: #1FBFB8;
+    --purple: #8E5CF7;
+    --ink: #4A2E1A;
+    --ink-soft: #7A5B3F;
+    --white: #FFFFFF;
+    --shadow: rgba(232,93,4,0.25);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    font-family: 'Nunito', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  h1, h2, h3, .logo, .step-num, .btn, .tab{
+    font-family: 'Baloo 2', cursive;
+  }
+
+  code, pre, .kbd{
+    font-family: 'Fredoka', monospace;
+  }
+
+  /* ---------- background bubble / wave animation ---------- */
+  #bg-canvas{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .wavy-bottom{
+    position: absolute;
+    bottom: 0; left: 0; width: 100%;
+    line-height: 0;
+    z-index: 1;
+  }
+
+  /* ---------- layout shell ---------- */
+  .wrap{
+    position: relative;
+    z-index: 2;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+  }
+
+  /* ---------- nav ---------- */
+  nav{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255,246,233,0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 4px solid var(--orange);
+  }
+  .nav-inner{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--orange-deep);
+    letter-spacing: 0.5px;
+  }
+  .logo svg{ width: 34px; height: 34px; }
+  .nav-links{
+    display:flex;
+    gap: 18px;
+    list-style:none;
+    margin:0; padding:0;
+  }
+  .nav-links a{
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 8px 14px;
+    border-radius: 999px;
+    transition: all .2s ease;
+  }
+  .nav-links a:hover{
+    background: var(--orange);
+    color: white;
+    transform: translateY(-2px) rotate(-2deg);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    text-align:center;
+    padding: 70px 0 40px;
+    position: relative;
+  }
+
+  .hero .eyebrow{
+    display:inline-block;
+    background: var(--white);
+    border: 3px dashed var(--orange);
+    color: var(--orange-deep);
+    padding: 6px 18px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    margin-bottom: 26px;
+    animation: pop-in .6s ease;
+  }
+
+  .hero h1{
+    font-size: clamp(2.6rem, 7vw, 4.6rem);
+    font-weight: 800;
+    margin: 0 0 14px;
+    color: var(--orange-deep);
+    text-shadow: 4px 4px 0 var(--orange-light);
+    letter-spacing: 1px;
+  }
+
+  .hero h1 span{ color: var(--purple); text-shadow: 4px 4px 0 #D9C4FF; }
+
+  .hero p.tag{
+    font-size: 1.2rem;
+    color: var(--ink-soft);
+    max-width: 560px;
+    margin: 0 auto 34px;
+    font-weight: 600;
+  }
+
+  .hero-actions{
+    display:flex;
+    gap:16px;
+    justify-content:center;
+    flex-wrap: wrap;
+    margin-bottom: 46px;
+  }
+
+  .btn{
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 14px 30px;
+    border-radius: 999px;
+    border: none;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-primary{
+    background: var(--orange);
+    color:white;
+    box-shadow: 0 8px 0 var(--orange-deep);
+  }
+  .btn-primary:hover{ transform: translateY(-3px); box-shadow: 0 11px 0 var(--orange-deep); }
+  .btn-primary:active{ transform: translateY(4px); box-shadow: 0 3px 0 var(--orange-deep); }
+
+  .btn-ghost{
+    background: white;
+    color: var(--orange-deep);
+    border: 3px solid var(--orange);
+    box-shadow: 0 8px 0 var(--orange-light);
+  }
+  .btn-ghost:hover{ transform: translateY(-3px); box-shadow: 0 11px 0 var(--orange-light); }
+  .btn-ghost:active{ transform: translateY(4px); box-shadow: 0 3px 0 var(--orange-light); }
+
+  /* ---------- mascot: the one-eyed octopus ---------- */
+  .mascot-stage{
+    width: 280px;
+    height: 280px;
+    margin: 0 auto 10px;
+    position: relative;
+  }
+
+  #octo{
+    width:100%;
+    height:100%;
+    filter: drop-shadow(0 18px 14px rgba(232,93,4,0.35));
+  }
+
+  .tentacle{
+    transform-origin: top center;
+    animation: wiggle 2.6s ease-in-out infinite;
+  }
+  .tentacle:nth-child(2){ animation-delay: .15s; }
+  .tentacle:nth-child(3){ animation-delay: .3s; }
+  .tentacle:nth-child(4){ animation-delay: .45s; }
+  .tentacle:nth-child(5){ animation-delay: .6s; }
+  .tentacle:nth-child(6){ animation-delay: .75s; }
+
+  @keyframes wiggle{
+    0%,100%{ transform: rotate(-6deg); }
+    50%{ transform: rotate(8deg); }
+  }
+
+  #octo-body{
+    animation: bob 3s ease-in-out infinite;
+    transform-origin: center;
+  }
+  @keyframes bob{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-10px); }
+  }
+
+  .pupil{ transition: transform .08s linear; }
+
+  @keyframes pop-in{
+    from{ opacity:0; transform: scale(.7) translateY(10px); }
+    to{ opacity:1; transform: scale(1) translateY(0); }
+  }
+
+  /* ---------- section shells ---------- */
+  section{ margin-top: 70px; }
+
+  .section-head{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom: 26px;
+  }
+  .section-head .badge{
+    width: 46px; height:46px;
+    background: var(--orange);
+    border-radius: 16px;
+    display:flex; align-items:center; justify-content:center;
+    color:white;
+    font-size: 1.4rem;
+    box-shadow: 0 5px 0 var(--orange-deep);
+    flex-shrink:0;
+    transform: rotate(-6deg);
+  }
+  .section-head h2{
+    font-size: 1.9rem;
+    margin:0;
+    color: var(--orange-deep);
+  }
+
+  .card{
+    background: white;
+    border-radius: 26px;
+    border: 4px solid var(--cream-2);
+    padding: 28px 30px;
+    box-shadow: 0 10px 0 var(--cream-2);
+  }
+
+  /* ---------- OS tabs ---------- */
+  .tabs{
+    display:flex;
+    gap:10px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+  }
+  .tab{
+    background: var(--cream-2);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    cursor:pointer;
+    font-size: 0.95rem;
+    transition: all .18s ease;
+  }
+  .tab.active{
+    background: var(--purple);
+    color:white;
+    transform: scale(1.06) rotate(-1deg);
+  }
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; animation: pop-in .3s ease; }
+
+  /* ---------- install steps ---------- */
+  .step{
+    display:flex;
+    gap: 20px;
+    margin-bottom: 26px;
+    align-items:flex-start;
+  }
+  .step:last-child{ margin-bottom: 0; }
+
+  .step-num{
+    flex-shrink:0;
+    width: 46px; height:46px;
+    border-radius: 50%;
+    background: var(--teal);
+    color:white;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800;
+    font-size:1.2rem;
+    box-shadow: 0 4px 0 #148f89;
+  }
+
+  .step-body{ flex:1; min-width:0; }
+  .step-body h3{
+    margin: 4px 0 8px;
+    font-size: 1.15rem;
+    color: var(--ink);
+  }
+  .step-body p{
+    margin: 0 0 10px;
+    color: var(--ink-soft);
+    font-weight:600;
+    line-height:1.5;
+  }
+
+  pre.code{
+    background: #2B1B0E;
+    color: #FFE3BF;
+    border-radius: 16px;
+    padding: 16px 20px;
+    overflow-x:auto;
+    font-size: 0.95rem;
+    position: relative;
+    border: 3px solid var(--orange-deep);
+    margin:0;
+  }
+  pre.code .comment{ color:#9C8267; }
+  pre.code .str{ color:#8FF7D2; }
+
+  .copy-btn{
+    position:absolute;
+    top:10px; right:10px;
+    background: var(--orange);
+    border:none;
+    color:white;
+    font-family:'Nunito',sans-serif;
+    font-weight:700;
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor:pointer;
+  }
+  .copy-btn:hover{ background: var(--orange-deep); }
+
+  .note{
+    background: #FFF1DC;
+    border-left: 6px solid var(--orange);
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-weight:600;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    margin-top: 10px;
+  }
+
+  /* ---------- feature grid ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+    gap: 18px;
+  }
+  .feature{
+    background:white;
+    border-radius: 22px;
+    padding: 22px;
+    border: 4px solid var(--cream-2);
+    text-align:center;
+    transition: transform .2s ease;
+  }
+  .feature:hover{ transform: translateY(-6px) rotate(-1deg); border-color: var(--orange); }
+  .feature .emoji{ font-size:2.2rem; display:block; margin-bottom:10px; }
+  .feature h3{ margin: 0 0 6px; font-size: 1.05rem; color: var(--orange-deep); }
+  .feature p{ margin:0; font-size:0.9rem; color:var(--ink-soft); font-weight:600; }
+
+  footer{
+    text-align:center;
+    margin-top: 80px;
+    padding: 30px 0 10px;
+    color: var(--ink-soft);
+    font-weight:700;
+    position:relative;
+    z-index:2;
+  }
+
+  ::selection{ background: var(--orange); color:white; }
+
+  @media (max-width: 600px){
+    .nav-links{ display:none; }
+    .step{ flex-direction: column; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">
+      <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#FF7A1A"/><circle cx="20" cy="20" r="8" fill="#fff"/><circle cx="20" cy="20" r="4" fill="#4A2E1A"/></svg>
+      Cyclopus
+    </div>
+    <ul class="nav-links">
+      <li><a href="#install">Install</a></li>
+      <li><a href="#usage">Usage</a></li>
+      <li><a href="#features">Features</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <section class="hero">
+    <span class="eyebrow">📦 v1.0 · open source</span>
+
+    <div class="mascot-stage">
+      <svg id="octo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g class="tentacle">
+          <path d="M70 130 Q40 150 55 185 Q60 195 50 200" stroke="#FF7A1A" stroke-width="16" fill="none" stroke-linecap="round"/>
+        </g>
+        <g class="tentacle">
+          <path d="M85 145 Q70 175 85 200" stroke="#FF7A1A" stroke-width="16" fill="none" stroke-linecap="round"/>
+        </g>
+        <g class="tentacle">
+          <path d="M100 150 Q100 180 100 205" stroke="#FF8C3A" stroke-width="16" fill="none" stroke-linecap="round"/>
+        </g>
+        <g class="tentacle">
+          <path d="M115 145 Q130 175 115 200" stroke="#FF7A1A" stroke-width="16" fill="none" stroke-linecap="round"/>
+        </g>
+        <g class="tentacle">
+          <path d="M130 130 Q160 150 145 185 Q140 195 150 200" stroke="#FF8C3A" stroke-width="16" fill="none" stroke-linecap="round"/>
+        </g>
+        <g class="tentacle">
+          <path d="M60 115 Q25 120 20 150" stroke="#FF7A1A" stroke-width="15" fill="none" stroke-linecap="round"/>
+        </g>
+
+        <g id="octo-body">
+          <ellipse cx="100" cy="95" rx="62" ry="55" fill="#FF8C3A"/>
+          <ellipse cx="100" cy="80" rx="62" ry="48" fill="#FF7A1A"/>
+          <circle cx="100" cy="95" r="38" fill="#FFF6E9"/>
+          <circle id="eye-track" class="pupil" cx="100" cy="95" r="20" fill="#4A2E1A"/>
+          <circle cx="107" cy="87" r="6" fill="#fff"/>
+          <path d="M75 60 Q100 45 125 60" stroke="#E85D04" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <circle cx="55" cy="105" r="9" fill="#FFC48C"/>
+          <circle cx="145" cy="105" r="9" fill="#FFC48C"/>
+        </g>
+      </svg>
+    </div>
+
+    <h1>Meet <span>Cyclopus</span></h1>
+    <p class="tag">Cyclopus is an elite, cross-platform cybersecurity command-and-control framework engineered for modern red team operations and ethical penetration testing. Its defining innovation is a decentralized command architecture, enabling security analysts to dispatch system-level instructions, execute scripts, and deploy payloads securely through ubiquitous messaging ecosystems—including Discord, Telegram, WhatsApp, Google Chat, Signal, and a responsive web dashboard—ensuring operator anonymity and operational resilience..</p>
+
+    <div class="hero-actions">
+      <a href="#install" class="btn btn-primary">🐙 Get Started</a>
+      <a href="https://github.com/Iankulani/cyclopus" class="btn btn-ghost">⭐ View on GitHub</a>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="section-head">
+      <div class="badge">⚙️</div>
+      <h2>Installing Cyclopus</h2>
+    </div>
+
+    <div class="card">
+      <div class="tabs">
+        <button class="tab active" data-os="mac">🍎 macOS / Linux</button>
+        <button class="tab" data-os="win">🪟 Windows</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="mac">
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Clone the repository with Git</h3>
+            <p>Grab the source code straight from GitHub.</p>
+            <pre class="code"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="comment"># clone it</span>
+git clone https://github.com/Iankulani/cyclopus
+cd cyclopus</pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>Create a virtual environment</h3>
+            <p>Keeps Cyclopus's ink contained to its own tank.</p>
+            <pre class="code"><button class="copy-btn" onclick="copyCode(this)">Copy</button>python3 -m venv venv
+source venv/bin/activate</pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Install the dependencies</h3>
+            <p>Pip pulls in everything Cyclopus needs to swim.</p>
+            <pre class="code"><button class="copy-btn" onclick="copyCode(this)">Copy</button>pip install -r requirements.txt</pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h3>Run Cyclopus</h3>
+            <p>Wake the octopus up and let it get to work.</p>
+            <pre class="code"><button class="copy-btn" onclick="copyCode(this)">Copy</button>python cyclopus.py</pre>
+            <div class="note">👀 Tip: run <code>python cyclopus.py --help</code> to see every command Cyclopus knows.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="tab-panel" data-panel="win">
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Clone the repository with Git</h3>
+            <p>Open PowerShell or Git Bash and grab the source.</p>
+            <pre class="code"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="comment"># clone it</span>
+git clone https://github.com/acdn/cyclopus.git
+cd cyclopus</pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>Create a virtual environment</h3>
+            <p>Same idea, Windows flavor.</p>
+            <pre class="code"><button class="copy-btn" onclick="copyCode(this)">Copy</button>python -m venv venv
+venv\Scripts\activate</pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Install the dependencies</h3>
+            <p>Pip pulls in everything Cyclopus needs to swim.</p>
+            <pre class="code"><button class="copy-btn" onclick="copyCode(this)">Copy</button>pip install -r requirements.txt</pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h3>Run Cyclopus</h3>
+            <p>Wake the octopus up and let it get to work.</p>
+            <pre class="code"><button class="copy-btn" onclick="copyCode(this)">Copy</button>python cyclopus.py</pre>
+            <div class="note">👀 Tip: run <code>python cyclopus.py --help</code> to see every command Cyclopus knows.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="usage">
+    <div class="section-head">
+      <div class="badge">🧭</div>
+      <h2>Quick Usage</h2>
+    </div>
+    <div class="card">
+      <div class="step">
+        <div class="step-num">A</div>
+        <div class="step-body">
+          <h3>Point Cyclopus at a project</h3>
+          <p>Tell it which folder to keep an eye on.</p>
+          <pre class="code"><button class="copy-btn" onclick="copyCode(this)">Copy</button>python cyclopus.py watch ./my-project</pre>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">B</div>
+        <div class="step-body">
+          <h3>Check the report</h3>
+          <p>Cyclopus prints a friendly summary once it's done looking around.</p>
+          <pre class="code"><button class="copy-btn" onclick="copyCode(this)">Copy</button>python cyclopus.py report</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="section-head">
+      <div class="badge">🎈</div>
+      <h2>Why Cyclopus?</h2>
+    </div>
+    <div class="grid">
+      <div class="feature">
+        <span class="emoji">👁️</span>
+        <h3>Cyclopus</h3>
+        <p>CYCLOPUS is a complete cybersecurity command center that lets you control everything from one place. Like an octopus with 8 arms reaching everywhere,.</p>
+      </div>
+      <div class="feature">
+        <span class="emoji">🐙</span>
+        <h3>Eight Helping Arms</h3>
+        <p>Watch all your systems in real-time
+
+.</p>
+      </div>
+      <div class="feature">
+        <span class="emoji">🐍</span>
+        <h3>Pure Python</h3>
+        <p>No heavyweight dependencies — just Python and a happy octopus.</p>
+      </div>
+      <div class="feature">
+        <span class="emoji">🎉</span>
+        <h3>Friendly by Design</h3>
+        <p>Plain-English output. No cryptic logs, no scary red walls of text.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    made with 🧡 by Ian Carter Kulani, MSc · Cyclopus keeps watch so you don't have to
+  </footer>
+
+</div>
+
+<script>
+  // ---- tabs ----
+  document.querySelectorAll('.tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelector('.tab-panel[data-panel="'+tab.dataset.os+'"]').classList.add('active');
+    });
+  });
+
+  // ---- copy buttons ----
+  function copyCode(btn){
+    const pre = btn.parentElement;
+    const clone = pre.cloneNode(true);
+    clone.querySelector('.copy-btn').remove();
+    const text = clone.innerText.trim();
+    navigator.clipboard.writeText(text).then(()=>{
+      const original = btn.textContent;
+      btn.textContent = 'Copied! ✅';
+      setTimeout(()=> btn.textContent = original, 1400);
+    });
+  }
+
+  // ---- eye follows cursor ----
+  const octoBody = document.getElementById('octo-body');
+  const pupil = document.getElementById('eye-track');
+  document.addEventListener('mousemove', (e)=>{
+    const rect = octoBody.getBoundingClientRect();
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top + rect.height*0.55;
+    const dx = e.clientX - cx;
+    const dy = e.clientY - cy;
+    const dist = Math.min(6, Math.hypot(dx,dy)/40);
+    const angle = Math.atan2(dy,dx);
+    const ox = Math.cos(angle)*dist;
+    const oy = Math.sin(angle)*dist;
+    pupil.setAttribute('cx', 100+ox);
+    pupil.setAttribute('cy', 95+oy);
+  });
+
+  // ---- background bubbles ----
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = document.documentElement.scrollHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const colors = ['rgba(255,122,26,0.18)','rgba(255,184,104,0.22)','rgba(31,191,184,0.16)','rgba(142,92,247,0.14)'];
+  const bubbles = Array.from({length: 46}).map(()=>({
+    x: Math.random()*W,
+    y: Math.random()*H,
+    r: 6 + Math.random()*22,
+    speed: 0.3 + Math.random()*0.9,
+    drift: (Math.random()-0.5)*0.6,
+    color: colors[Math.floor(Math.random()*colors.length)],
+    wobble: Math.random()*Math.PI*2
+  }));
+
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    bubbles.forEach(b=>{
+      b.y -= b.speed;
+      b.wobble += 0.02;
+      b.x += Math.sin(b.wobble)*b.drift;
+      if(b.y < -40){
+        b.y = H + 40;
+        b.x = Math.random()*W;
+      }
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
+      ctx.fillStyle = b.color;
+      ctx.fill();
+      ctx.strokeStyle = b.color.replace(/[\d.]+\)$/,'0.5)');
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  window.addEventListener('load', resize);
+  new MutationObserver(resize).observe(document.body, {childList:true, subtree:true});
+</script>
+
+</body>
+</html>
